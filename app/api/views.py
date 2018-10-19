@@ -2,7 +2,7 @@ from . import api
 from flask import jsonify
 from flask import request
 from app.auth import Auth
-from app.models import cxf_admin
+from app.models import cxf_user
 from app.common import falseReturn
 
 @api.route('/test',methods=['POST'])
@@ -20,21 +20,22 @@ def login():
         password = res.get('password')
 
         #查询数据库，是否正确
-        user = cxf_admin.query.filter_by(name=username).first()
+        user = cxf_user.query.filter_by(name=username).first()
         if user:
             if user.password == password:
-
-                u_id = user.id
+                u_id = user.uid
                 u_name = user.name
-
+                u_group = user.group
                 #包装jwt,uid为查询后的uid,username为username
-                token = Auth.encode_token(uid=u_id,username=u_name)
+                token = Auth.encode_token(uid=u_id,username=u_name,group=u_group)
 
                 json = {
                     'msg':'登录成功!',
                     'data':{
                         'token':token,
-                        'uid':u_id
+                        'uid':u_id,
+                        'username':u_name,
+                        'group':u_group
                     },
                     'status':200
                 }

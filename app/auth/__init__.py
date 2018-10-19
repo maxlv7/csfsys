@@ -4,21 +4,22 @@ from config import configs
 config = configs.get('development')
 
 
-def get_default_payload(uid,username):
+def get_default_payload(uid,username,group):
     payload = {
         'exp': int(time.time()+86400),
         'iat':int(time.time()),
         'iss':'Li',
         'data':{
             'uid':uid,
-            'name':username
+            'name':username,
+            'group':group
         }
     }
     return payload
 
 class Auth():
     @staticmethod
-    def encode_token(uid,username):
+    def encode_token(uid,username,group):
         '''
         生成认证Token
         :param uid: int
@@ -26,7 +27,7 @@ class Auth():
         :return:string
         '''
         try:
-            return str(jwt.encode(key=config.SECRET_KEY,payload=get_default_payload(uid,username)).decode('utf-8'))
+            return str(jwt.encode(key=config.SECRET_KEY,payload=get_default_payload(uid,username,group)).decode('utf-8'))
         except Exception as e:
             return e
 
