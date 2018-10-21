@@ -41,5 +41,5 @@ class Auth():
         try:
             return jwt.decode(token,config.SECRET_KEY)
         except:
-            return '发生未知错误！'
+            return 'Token解析错误！'
 

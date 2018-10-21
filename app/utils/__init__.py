@@ -33,7 +33,8 @@ def init_utils(app):
                 data = Auth.decode_token(Token)
                 print(data)
                 #在这里判断是否为管理员
-                pass
+                if(data['data']['group']!=1):
+                    abort(403)
             except:
                 abort(403)
 
