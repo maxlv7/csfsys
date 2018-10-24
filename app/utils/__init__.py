@@ -6,19 +6,19 @@ from app.common import trueReturn,falseReturn
 def init_errors(app):
     @app.errorhandler(404)
     def page_not_found(error):
-        return jsonify(falseReturn('找不到资源','404'))
+        return jsonify(falseReturn('null','找不到资源'))
 
     @app.errorhandler(403)
     def forbidden(error):
-        return jsonify(falseReturn('没有权限', '403'))
+        return jsonify(falseReturn('null', '没有权限'))
 
     @app.errorhandler(500)
     def general_error(error):
-        return jsonify(falseReturn('服务器错误', '500'))
+        return jsonify(falseReturn('null', '服务器错误'))
 
     @app.errorhandler(502)
     def gateway_error(error):
-        return jsonify(falseReturn('null', '502'))
+        return jsonify(falseReturn('null', '网关出错'))
 
 def init_utils(app):
 

@@ -2,7 +2,8 @@ from flask import jsonify,request
 from . import api
 from app.models import cxf_user,cxf_metas,cxf_relationships
 from app.common import trueReturn,falseReturn
-
+from app.models import db
+from app.utils.commonOrm import insert
 
 #得到所有信息和分数表
 @api.route('/admin/getStuList',methods=["GET"])
@@ -52,3 +53,17 @@ def getUserAction():
         t['time'] = q.time
         action_list.append(t)
     return jsonify(trueReturn(data=action_list,msg="请求成功!"))
+
+
+#创建新用户
+@api.route('/admin/addUser')
+def adduser():
+
+    name = request.args.get('name')
+    stuNum = request.args.get('stuNum') or None
+    point = request.args.get('point') or 55
+
+    u = cxf_user(name=name,stu_num=stuNum,now_point=point,group=0)
+    insert(u)
+    return jsonify(trueReturn('null','添加成功'))
+
