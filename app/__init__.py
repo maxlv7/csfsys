@@ -23,7 +23,7 @@ def create_app():
         init_errors(app)
 
         #初始化工具
-        init_utils(app)
+        # init_utils(app)
 
         #注册api
         from app.api import api

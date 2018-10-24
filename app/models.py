@@ -20,7 +20,7 @@ class cxf_relationships(db.Model):
 
     __tablename__ = 'cxf_relationships'
 
-    cid = db.Column(db.Integer,primary_key=True,nullable=False)
+    uid = db.Column(db.Integer,primary_key=True,nullable=False)
     mid = db.Column(db.Integer,primary_key=True,nullable=False)
 
 class cxf_metas(db.Model):
