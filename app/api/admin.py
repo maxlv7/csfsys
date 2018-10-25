@@ -3,7 +3,7 @@ from . import api
 from app.models import cxf_user,cxf_metas,cxf_relationships
 from app.common import trueReturn,falseReturn
 from app.models import db
-from app.utils.commonOrm import insert
+from app.utils.commonOrm import insert,update,delete
 
 #得到所有信息和分数表
 @api.route('/admin/getStuList',methods=["GET"])
@@ -32,6 +32,7 @@ def getUserInfo():
     user['id'] = u.uid
     user['username'] = u.name
     user['point'] = u.now_point
+    user['stuNum'] = u.stu_num
 
     return jsonify(trueReturn(data=user,msg='请求成功'))
 
@@ -59,7 +60,7 @@ def getUserAction():
 @api.route('/admin/addUser')
 def adduser():
 
-    name = request.args.get('name')
+    name = request.args.get('name').strip()
     stuNum = request.args.get('stuNum') or None
     point = request.args.get('point') or 55
 
@@ -67,3 +68,37 @@ def adduser():
     insert(u)
     return jsonify(trueReturn('null','添加成功'))
 
+#修改用户信息
+@api.route('/admin/updateUser')
+def updateUser():
+
+    uid = request.args.get('uid')
+    name = request.args.get('name')
+    stuNum = request.args.get('stuNum') or None
+    point = request.args.get('point') or 55
+
+    u = cxf_user.query.filter_by(uid=uid).first_or_404()
+    u.name = name
+    u.stuNum = stuNum
+    u.now_point = point
+    update()
+    return jsonify(trueReturn("null","修改成功!"))
+
+#删除用户
+@api.route('/admin/delUser')
+def deluser():
+    try:
+        uid = request.args.get('uid')
+
+        #通过uid找到所有mid
+        query = cxf_relationships.query.filter_by(uid=uid).all()
+
+        # 解除关系
+        for res in query:
+            delete(res)
+        #删除用户
+        u = cxf_user.query.filter_by(uid=uid).first()
+        delete(u)
+        return jsonify(trueReturn('null','删除成功!'))
+    except:
+        return jsonify(falseReturn('null','删除失败!服务器发生了未知错误!'))
