@@ -4,19 +4,23 @@ from app.models import cxf_user,cxf_metas,cxf_relationships
 from app.models import db
 from app.common import trueReturn,falseReturn
 from app.utils.commonOrm import insert,update,delete
+from app.utils.tools import set_config,get_config
+from sqlalchemy import desc
 
 #得到所有信息和分数表
 @api.route('/admin/getStuList',methods=["GET"])
 def getStuList():
     try:
-        all_list = cxf_user.query.all()
+        #按分数从高到低排列
+        all_list = cxf_user.query.order_by(desc(cxf_user.now_point)).all()
         all_info= list()
         for user in all_list:
-            info = dict()
-            info['id'] = user.uid
-            info['name'] = user.name
-            info['point'] = user.now_point
-            all_info.append(info)
+            if(user.group==0):
+                info = dict()
+                info['id'] = user.uid
+                info['name'] = user.name
+                info['point'] = user.now_point
+                all_info.append(info)
         return jsonify(trueReturn({'stuList':all_info},msg="success"))
     except:
         return jsonify(falseReturn("null",'查询错误!'))
@@ -62,7 +66,7 @@ def adduser():
 
     name = request.args.get('name').strip()
     stuNum = request.args.get('stuNum') or None
-    point = request.args.get('point') or 55
+    point = request.args.get('point') or get_config('defaultPoint')
 
     u = cxf_user(name=name,stu_num=stuNum,now_point=point,group=0)
     insert(u)
@@ -75,7 +79,7 @@ def updateUser():
     uid = request.args.get('uid')
     name = request.args.get('name')
     stuNum = request.args.get('stuNum') or None
-    point = request.args.get('point') or 55
+    point = request.args.get('point')
 
     u = cxf_user.query.filter_by(uid=uid).first_or_404()
     u.name = name
@@ -129,3 +133,25 @@ def addAction():
     update()
 
     return jsonify(trueReturn('',"添加事件成功!"))
+
+#设置 设置
+@api.route('/admin/setConfig')
+def setconfig():
+    key = request.args.get('key')
+    value = request.args.get('value')
+    print(key,value)
+    if(set_config(key,value)):
+        return jsonify(trueReturn("null","设置成功!"))
+    else:
+        return jsonify(falseReturn("null","设置失败!"))
+
+#得到设置
+@api.route('/admin/getConfig')
+def getConfig():
+    key = request.args.get('key')
+
+    if(get_config(key)):
+        return jsonify(trueReturn(data=get_config(key),msg="获取成功!"))
+    else:
+        return jsonify(falseReturn("null","获取失败"))
+
