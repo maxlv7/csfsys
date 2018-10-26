@@ -1,8 +1,8 @@
 from flask import jsonify,request
 from . import api
 from app.models import cxf_user,cxf_metas,cxf_relationships
-from app.common import trueReturn,falseReturn
 from app.models import db
+from app.common import trueReturn,falseReturn
 from app.utils.commonOrm import insert,update,delete
 
 #得到所有信息和分数表
@@ -102,3 +102,30 @@ def deluser():
         return jsonify(trueReturn('null','删除成功!'))
     except:
         return jsonify(falseReturn('null','删除失败!服务器发生了未知错误!'))
+
+
+#写入action事件
+@api.route('/admin/addAction')
+def addAction():
+
+    uid = request.args.get('uid')
+    action = request.args.get('value')
+    action_score = request.args.get('point')
+    timeStamp = request.args.get('date')
+
+    print(uid,action,action_score,timeStamp)
+
+    #插入到metas,拿到相应的mid
+    m = cxf_metas(action=action,action_score=action_score,time=timeStamp)
+    insert(m)
+    mid = m.mid
+    #添加关系
+    rea = cxf_relationships(uid=uid,mid=mid)
+    insert(rea)
+
+    #计算分数
+    u = cxf_user.query.filter_by(uid=uid).first()
+    u.now_point = u.now_point+int(action_score)
+    update()
+
+    return jsonify(trueReturn('',"添加事件成功!"))

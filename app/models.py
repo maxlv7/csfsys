@@ -30,7 +30,7 @@ class cxf_metas(db.Model):
     mid = db.Column(db.Integer,primary_key=True,nullable=False)
     action = db.Column(db.TEXT)
     action_score = db.Column(db.Integer)
-    time = db.Column(db.Integer)
+    time = db.Column(db.BigInteger)
 
 class cxf_options(db.Model):
 
