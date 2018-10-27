@@ -11,7 +11,7 @@ def create_app():
         # 允许跨域
         CORS(app)
         #导入配置
-        app.config.from_object(configs['development'])
+        app.config.from_object(configs['production'])
 
         #初始化数据库
         db.init_app(app)
