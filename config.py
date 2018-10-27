@@ -14,7 +14,6 @@ class DevelopmentConfig(Config):
 
     SECRET_KEY = os.environ.get('SECRET_KEY') or "hard_to_guess"
     DEBUG = True
-
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@127.0.0.1:3306/cxfsys'
 
@@ -22,10 +21,9 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
-    # SQLALCHEMY_DATABASE_URI = os.environ.get("PRO_DATA_BASE_URL") or \
-    #       'sqlite:///' + os.path.join(basedir,"AiyBlog.db") or \
-    #        'mysql+pymysql://root:root@127.0.0.1:3306/aiyblog'
-
+    SECRET_KEY = os.environ.get('SECRET_KEY') or "hard_to_guess"
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@127.0.0.1:3306/cxfsys'
 configs = {
     "development":DevelopmentConfig,
     "production":ProductionConfig
