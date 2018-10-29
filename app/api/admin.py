@@ -117,7 +117,6 @@ def addAction():
     action_score = request.args.get('point')
     timeStamp = request.args.get('date')
 
-    print(uid,action,action_score,timeStamp)
 
     #插入到metas,拿到相应的mid
     m = cxf_metas(action=action,action_score=action_score,time=timeStamp)
@@ -165,8 +164,6 @@ def addCommonAction():
     action_score = info['point']
     date = info['date']
 
-    print(info)
-    print(action,action_score,date)
     #插入到metas,拿到相应的mid
     m = cxf_metas(action=action,action_score=action_score,time=date)
     insert(m)
