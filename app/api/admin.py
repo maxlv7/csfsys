@@ -139,7 +139,6 @@ def addAction():
 def setconfig():
     key = request.args.get('key')
     value = request.args.get('value')
-    print(key,value)
     if(set_config(key,value)):
         return jsonify(trueReturn("null","设置成功!"))
     else:
@@ -154,4 +153,33 @@ def getConfig():
         return jsonify(trueReturn(data=get_config(key),msg="获取成功!"))
     else:
         return jsonify(falseReturn("null","获取失败"))
+
+
+#添加集体活动
+@api.route('/admin/addCommonAction',methods=["POST"])
+def addCommonAction():
+    import time
+    info = request.get_json()
+
+    action = info['value']
+    action_score = info['point']
+    date = info['date']
+
+    print(info)
+    print(action,action_score,date)
+    #插入到metas,拿到相应的mid
+    m = cxf_metas(action=action,action_score=action_score,time=date)
+    insert(m)
+    mid = m.mid
+
+    #为每个人添加活动关系
+    for id in info['ids']:
+        # 添加关系
+        rea = cxf_relationships(uid=id, mid=mid)
+        insert(rea)
+        #分数处理
+        u = cxf_user.query.filter_by(uid=id).first()
+        u.now_point = u.now_point + int(action_score)
+        update()
+    return jsonify(trueReturn("null","添加成功!"))
 
